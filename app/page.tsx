@@ -152,7 +152,7 @@ export default function Home() {
         className="border-b border-line/70 bg-cream py-12 sm:py-16"
       >
         <Container>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <Eyebrow>Start here</Eyebrow>
               <h2
@@ -162,13 +162,13 @@ export default function Home() {
                 Not sure where to begin?
               </h2>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-ink/55 sm:text-right">
+            <p className="max-w-sm text-sm leading-relaxed text-ink/55 lg:text-right">
               Pick the sentence that sounds most like you. We will take it from
               there.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-3 md:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {startHere.map((item) => (
               <Link
                 key={item.href}

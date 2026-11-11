@@ -22,9 +22,8 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Backend
 
-The site's backend is the Django REST project in the sibling
-`student-fellowship-backend` folder. The frontend reads its base URL from
-`NEXT_PUBLIC_API_URL` (default `http://localhost:8000`).
+The site's backend is the Django REST project in `backend/`. The frontend reads
+its base URL from `NEXT_PUBLIC_API_URL` (default `http://localhost:8000`).
 
 | Endpoint                 | Method | Purpose                                                                        |
 | ------------------------ | ------ | ------------------------------------------------------------------------------ |
@@ -40,7 +39,7 @@ requests such as:
 { "kind": "join", "name": "…", "contact": "…", "campus": "…" }
 ```
 
-Start the backend with `python manage.py runserver` from its folder and make
+Start the backend with `python manage.py runserver` from `backend/` and make
 sure its CORS settings include this site's origin.
 
 ## Learn More

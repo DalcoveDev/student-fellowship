@@ -1,0 +1,20 @@
+# Python caches & compiles
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local database files
+db.sqlite3
+
+# Local credentials
+.env
+deploy/.env
+deploy/backups/
+deploy/certbot/
+
+# Media uploads and collected static directories
+media/
+staticfiles/
+
+# Logs
+*.log

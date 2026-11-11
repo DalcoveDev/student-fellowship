@@ -89,9 +89,8 @@ export default function ContactPage() {
                 Send us a message.
               </h2>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-ink/65">
-                Fill in the form and it will open your email app with the
-                message ready to send. We will get back to you as soon as we
-                can.
+                Fill in the form and it comes straight to our team. We will get
+                back to you as soon as we can.
               </p>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">

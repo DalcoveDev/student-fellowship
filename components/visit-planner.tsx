@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Check, MapPin, Phone } from "@/components/icons";
+import { submitInquiry } from "@/lib/api";
 import { campuses, site, thursdaySessions } from "@/lib/site";
 
 const campusOptions = [
@@ -48,31 +49,40 @@ export function VisitPlanner() {
   const [campus, setCampus] = useState("");
   const [session, setSession] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const selectedCampus = campusOptions.find((option) => option.value === campus);
   const selectedSession = sessionOptions.find((option) => option.value === session);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = String(data.get("name") ?? "");
-    const contact = String(data.get("contact") ?? "");
-    const message = String(data.get("message") ?? "");
+    const form = event.currentTarget;
+    const data = new FormData(form);
 
-    const subject = `Visit plan — ${name}`;
-    const body = [
-      `Name: ${name}`,
-      `Phone or email: ${contact}`,
-      `Campus: ${selectedCampus?.title ?? "Not sure yet"}`,
-      `Session: ${selectedSession?.title ?? "Not sure yet"}`,
-      "",
-      message ? `Message: ${message}` : "I would like to plan a visit.",
-    ].join("\n");
+    setSending(true);
+    setError(null);
 
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
-    setSent(true);
+    try {
+      await submitInquiry("visit", {
+        name: String(data.get("name") ?? ""),
+        contact: String(data.get("contact") ?? ""),
+        campus: selectedCampus?.title ?? "",
+        session: selectedSession?.title ?? "",
+        message: String(data.get("message") ?? ""),
+      });
+
+      form.reset();
+      setSent(true);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   if (sent) {
@@ -85,9 +95,8 @@ export function VisitPlanner() {
           Your visit plan is ready.
         </h3>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink/65">
-          Your email app should now be open with the details ready to send. Once
-          we receive it, someone from the fellowship will get in touch to confirm
-          your visit and answer any questions.
+          We have your details. Someone from the fellowship will get in touch to
+          confirm your visit and answer any questions before you come.
         </p>
         <div className="mt-6 rounded-2xl border border-line bg-sand/60 p-5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-moss">
@@ -372,16 +381,25 @@ export function VisitPlanner() {
               </dl>
             </div>
 
+            {error ? (
+              <p
+                role="alert"
+                className="mt-4 rounded-xl border border-[#b4452f]/30 bg-[#b4452f]/5 px-4 py-3 text-sm leading-relaxed text-[#8f2f1e]"
+              >
+                {error}
+              </p>
+            ) : null}
+
             <button
               type="submit"
-              className="group mt-5 inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-gold bg-gold px-6 py-3.5 text-sm font-semibold text-forest-deep transition-colors hover:bg-gold-soft"
+              disabled={sending}
+              className="group mt-5 inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-gold bg-gold px-6 py-3.5 text-sm font-semibold text-forest-deep transition-colors hover:bg-gold-soft disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Send my visit plan
+              {sending ? "Sending…" : "Send my visit plan"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
             <p className="mt-3 text-center text-xs leading-relaxed text-ink/50">
-              This opens your email app with your plan ready to send. Prefer to
-              call?{" "}
+              We will get back to you to confirm. Prefer to call?{" "}
               <a
                 href={site.joinPhone.href}
                 className="font-semibold text-forest underline decoration-gold/60 underline-offset-4"
@@ -396,7 +414,10 @@ export function VisitPlanner() {
       <div className="mt-7 flex items-center justify-between gap-4 border-t border-line pt-5">
         <button
           type="button"
-          onClick={() => setStep((current) => Math.max(1, current - 1))}
+          onClick={() => {
+            setError(null);
+            setStep((current) => Math.max(1, current - 1));
+          }}
           disabled={step === 1}
           className="text-sm font-semibold text-forest transition-colors hover:text-gold disabled:cursor-not-allowed disabled:text-ink/25"
         >
@@ -405,7 +426,10 @@ export function VisitPlanner() {
         {step < 3 ? (
           <button
             type="button"
-            onClick={() => setStep((current) => Math.min(3, current + 1))}
+            onClick={() => {
+              setError(null);
+              setStep((current) => Math.min(3, current + 1));
+            }}
             disabled={step === 1 ? !campus : !session}
             className="group inline-flex items-center gap-2.5 rounded-full border border-gold bg-gold px-6 py-3 text-sm font-semibold text-forest-deep transition-colors hover:bg-gold-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-sand disabled:text-ink/35"
           >

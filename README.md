@@ -20,6 +20,29 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Backend
+
+The site's backend is the Django REST project in the sibling
+`student-fellowship-backend` folder. The frontend reads its base URL from
+`NEXT_PUBLIC_API_URL` (default `http://localhost:8000`).
+
+| Endpoint                 | Method | Purpose                                                                        |
+| ------------------------ | ------ | ------------------------------------------------------------------------------ |
+| `/api/v1/site-content/`  | GET    | All site content: site details, nav, campuses, events, articles, gallery, etc.  |
+| `/api/v1/inquiries/`     | POST   | Contact, join, and visit form submissions (`kind` field selects the form)      |
+
+The content endpoint mirrors the shapes in `lib/site.ts`, `lib/articles.ts`, and
+`lib/faith.ts`; the Django app `site_content` seeds and edits those records.
+Inquiry submissions are stored in the CMS inbox and accept `application/json`
+requests such as:
+
+```json
+{ "kind": "join", "name": "…", "contact": "…", "campus": "…" }
+```
+
+Start the backend with `python manage.py runserver` from its folder and make
+sure its CORS settings include this site's origin.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

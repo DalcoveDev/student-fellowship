@@ -1,36 +1,67 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "@/components/icons";
+import { ArrowRight, Check } from "@/components/icons";
+import { submitInquiry } from "@/lib/api";
 import { campuses, site } from "@/lib/site";
 
 const inputStyles =
   "w-full rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none";
 
 export function JoinForm() {
-  const [opened, setOpened] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = String(data.get("name") ?? "");
-    const contact = String(data.get("contact") ?? "");
-    const campus = String(data.get("campus") ?? "");
-    const message = String(data.get("message") ?? "");
+    const form = event.currentTarget;
+    const data = new FormData(form);
 
-    const subject = `Bible study enquiry — ${name}`;
-    const body = [
-      `Name: ${name}`,
-      `Phone or email: ${contact}`,
-      `Campus: ${campus}`,
-      "",
-      message ? `Message: ${message}` : "I would like to join a Bible study.",
-    ].join("\n");
+    setStatus("sending");
+    setError(null);
 
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
+    try {
+      await submitInquiry("join", {
+        name: String(data.get("name") ?? ""),
+        contact: String(data.get("contact") ?? ""),
+        campus: String(data.get("campus") ?? ""),
+        message: String(data.get("message") ?? ""),
+      });
+
+      form.reset();
+      setStatus("sent");
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Something went wrong. Please try again.",
+      );
+      setStatus("idle");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div>
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-forest text-cream">
+          <Check className="h-5 w-5" />
+        </span>
+        <h3 className="mt-5 font-display text-2xl text-forest-deep">
+          Enquiry sent.
+        </h3>
+        <p className="mt-3 text-sm leading-relaxed text-ink/65">
+          Thank you. We will connect you with the campus fellowship or Thursday
+          session that fits your week, and someone will be in touch soon.
+        </p>
+        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className="mt-6 text-sm font-semibold text-forest underline decoration-gold/60 underline-offset-4"
+        >
+          Send another enquiry
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -93,18 +124,25 @@ export function JoinForm() {
         />
       </div>
 
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-[#b4452f]/30 bg-[#b4452f]/5 px-4 py-3 text-sm leading-relaxed text-[#8f2f1e]"
+        >
+          {error}
+        </p>
+      ) : null}
+
       <button
         type="submit"
-        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-gold bg-gold px-6 py-3.5 text-sm font-semibold text-forest-deep transition-colors hover:bg-gold-soft"
+        disabled={status === "sending"}
+        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-gold bg-gold px-6 py-3.5 text-sm font-semibold text-forest-deep transition-colors hover:bg-gold-soft disabled:cursor-not-allowed disabled:opacity-70"
       >
-        Send my enquiry
+        {status === "sending" ? "Sending…" : "Send my enquiry"}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </button>
 
       <p className="text-center text-xs leading-relaxed text-ink/50">
-        {opened
-          ? "Your email app should now be open with your message ready to send."
-          : "This opens your email app with the message ready to send."}{" "}
         Prefer to call?{" "}
         <a href={site.joinPhone.href} className="font-semibold text-forest underline decoration-gold/60 underline-offset-4">
           {site.joinPhone.label}

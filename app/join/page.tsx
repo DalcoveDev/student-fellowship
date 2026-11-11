@@ -16,7 +16,7 @@ const nextSteps = [
     step: "01",
     title: "Send your details",
     description:
-      "Fill in the form with your name, contact, and campus. It opens your email app with everything ready to send.",
+      "Fill in the form with your name, contact, and campus, and it comes straight to our team.",
     icon: BookOpen,
   },
   {

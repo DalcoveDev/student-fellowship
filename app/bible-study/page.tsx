@@ -11,7 +11,7 @@ import {
   SectionHeading,
   TextLink,
 } from "@/components/ui";
-import { site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Bible study & training",
@@ -66,7 +66,9 @@ const questions = [
   },
 ];
 
-export default function BibleStudyPage() {
+export default async function BibleStudyPage() {
+  const { site, thursdaySessions } = await getSiteContent();
+
   return (
     <>
       <PageHero

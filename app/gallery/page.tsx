@@ -8,7 +8,7 @@ import {
   SectionHeading,
 } from "@/components/ui";
 import { GalleryGrid } from "@/components/gallery-grid";
-import { gallery } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
     "Photos from Christian Students Network fellowships, Bible studies, conferences, community outreach, and online ministry across Rwanda.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const { gallery } = await getSiteContent();
+
   return (
     <>
       <PageHero

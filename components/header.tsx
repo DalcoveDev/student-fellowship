@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown, Close, Mail, Menu, Phone } from "@/components/icons";
 import { ButtonLink, Container } from "@/components/ui";
-import { nav, site } from "@/lib/site";
+import type { NavItem, Site } from "@/lib/content";
 
-export function Header() {
+export function Header({ site, nav }: { site: Site; nav: NavItem[] }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);

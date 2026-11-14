@@ -3,7 +3,7 @@ import Image from "next/image";
 import { BookOpen, Clock, MapPin, Phone, Users } from "@/components/icons";
 import { Container, CtaBand, Eyebrow, PageHero, TextLink } from "@/components/ui";
 import { JoinForm } from "@/components/join-form";
-import { campuses, site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Join a Bible study",
@@ -35,7 +35,9 @@ const nextSteps = [
   },
 ];
 
-export default function JoinPage() {
+export default async function JoinPage() {
+  const { campuses, site, thursdaySessions } = await getSiteContent();
+
   return (
     <>
       <PageHero
@@ -83,7 +85,7 @@ export default function JoinPage() {
               </div>
 
               <div className="mt-8 rounded-[1.5rem] border border-line bg-cream p-6 sm:p-8">
-                <JoinForm />
+                <JoinForm campuses={campuses} site={site} />
               </div>
             </div>
 

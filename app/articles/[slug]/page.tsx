@@ -5,9 +5,14 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { ButtonLink, Container, CtaBand, Eyebrow } from "@/components/ui";
-import { articles, getArticle, readingTime } from "@/lib/articles";
+import {
+  getArticle,
+  getSiteContent,
+  readingTime,
+} from "@/lib/content";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { articles } = await getSiteContent();
   return articles.map((article) => ({ slug: article.slug }));
 }
 
@@ -17,7 +22,8 @@ export async function generateMetadata(
   props: PageProps<"/articles/[slug]">,
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const article = getArticle(slug);
+  const { articles } = await getSiteContent();
+  const article = getArticle(articles, slug);
 
   if (!article) {
     return { title: "Article not found" };
@@ -31,7 +37,8 @@ export async function generateMetadata(
 
 export default async function ArticlePage(props: PageProps<"/articles/[slug]">) {
   const { slug } = await props.params;
-  const article = getArticle(slug);
+  const { articles } = await getSiteContent();
+  const article = getArticle(articles, slug);
 
   if (!article) {
     notFound();

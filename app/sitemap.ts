@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { articles } from "@/lib/articles";
-import { site } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 const routes: {
   path: string;
@@ -27,7 +26,8 @@ const routes: {
   { path: "/contact", priority: 0.7, changeFrequency: "yearly" },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { articles, site } = await getSiteContent();
   const lastModified = new Date();
 
   return [

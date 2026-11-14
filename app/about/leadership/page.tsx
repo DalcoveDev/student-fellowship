@@ -14,7 +14,7 @@ import {
   PageHero,
   SectionHeading,
 } from "@/components/ui";
-import { leadershipTeams, site } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Leadership",
@@ -48,7 +48,9 @@ const commitments = [
   },
 ];
 
-export default function LeadershipPage() {
+export default async function LeadershipPage() {
+  const { leadershipTeams, site } = await getSiteContent();
+
   return (
     <>
       <PageHero

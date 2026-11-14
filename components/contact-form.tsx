@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { ArrowRight, Check } from "@/components/icons";
 import { submitInquiry } from "@/lib/api";
-import { site } from "@/lib/site";
+import type { Site } from "@/lib/content";
 
 const inputStyles =
   "w-full rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none";
 
-export function ContactForm() {
+export function ContactForm({ site }: { site: Site }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
 

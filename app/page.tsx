@@ -17,8 +17,7 @@ import {
   SectionHeading,
   TextLink,
 } from "@/components/ui";
-import { articles, readingTime } from "@/lib/articles";
-import { campuses, events, gallery, site } from "@/lib/site";
+import { getSiteContent, readingTime } from "@/lib/content";
 
 const startHere = [
   {
@@ -78,7 +77,10 @@ const pathways = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const { articles, campuses, events, gallery, site, testimonials } =
+    await getSiteContent();
+
   return (
     <>
       <section className="relative isolate overflow-hidden bg-forest-deep text-cream">
@@ -412,7 +414,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
 
       <section className="py-16 sm:py-24">
         <Container>

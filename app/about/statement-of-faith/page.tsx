@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BookOpen } from "@/components/icons";
 import { ButtonLink, Container, CtaBand, Eyebrow, PageHero } from "@/components/ui";
-import { statementOfFaith } from "@/lib/faith";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Statement of faith",
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "What Christian Students Network believes about the Bible, God, the Holy Spirit, salvation, the Church, and the return of Christ.",
 };
 
-export default function StatementOfFaithPage() {
+export default async function StatementOfFaithPage() {
+  const { statementOfFaith } = await getSiteContent();
+
   return (
     <>
       <PageHero

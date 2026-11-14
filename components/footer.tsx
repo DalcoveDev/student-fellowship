@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone, WhatsApp, YouTube } from "@/components/icons";
 import { Container } from "@/components/ui";
-import { site } from "@/lib/site";
+import type { Site } from "@/lib/content";
 
 const explore = [
   { label: "About us", href: "/about" },
@@ -23,7 +23,7 @@ const ministries = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function Footer() {
+export function Footer({ site }: { site: Site }) {
   return (
     <footer className="bg-forest-deep text-cream">
       <Container className="py-14 sm:py-16">

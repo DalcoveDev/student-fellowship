@@ -1,9 +1,11 @@
 import { Container, Eyebrow, TextLink } from "@/components/ui";
-import { testimonials } from "@/lib/site";
+import type { Testimonial } from "@/lib/content";
 
 export function Testimonials({
+  testimonials,
   className = "",
 }: {
+  testimonials: Testimonial[];
   className?: string;
 }) {
   return (

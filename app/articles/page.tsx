@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "@/components/icons";
 import { Container, CtaBand, Eyebrow, PageHero } from "@/components/ui";
-import { articles, readingTime } from "@/lib/articles";
+import { getSiteContent, readingTime } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Articles",
@@ -11,7 +11,9 @@ export const metadata: Metadata = {
     "Reflections on discipleship, doctrine, and life together as students following Jesus, from Christian Students Network.",
 };
 
-export default function ArticlesPage() {
+export default async function ArticlesPage() {
+  const { articles } = await getSiteContent();
+
   return (
     <>
       <PageHero

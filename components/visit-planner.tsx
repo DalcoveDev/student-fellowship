@@ -3,37 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Check, MapPin, Phone } from "@/components/icons";
 import { submitInquiry } from "@/lib/api";
-import { campuses, site, thursdaySessions } from "@/lib/site";
-
-const campusOptions = [
-  ...campuses.map((campus) => ({
-    value: campus.slug,
-    title: campus.shortName,
-    detail: campus.name,
-    meta: campus.type,
-  })),
-  {
-    value: "not-sure",
-    title: "Not sure yet",
-    detail: "Help me choose",
-    meta: "We will help you find the right group",
-  },
-];
-
-const sessionOptions = [
-  ...thursdaySessions.map((session) => ({
-    value: session.session,
-    title: session.session,
-    detail: session.time,
-    meta: "Thursday · Kicukiro – Mu Banyamakuru",
-  })),
-  {
-    value: "not-sure",
-    title: "Not sure yet",
-    detail: "Help me choose a time",
-    meta: "We will suggest the best session for your schedule",
-  },
-];
+import type { Campus, Site, ThursdaySession } from "@/lib/content";
 
 const inputStyles =
   "w-full rounded-xl border border-line bg-cream px-4 py-3 text-sm text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none";
@@ -44,13 +14,51 @@ const steps = [
   { number: "03", label: "Details" },
 ];
 
-export function VisitPlanner() {
+export function VisitPlanner({
+  campuses,
+  site,
+  thursdaySessions,
+}: {
+  campuses: Campus[];
+  site: Site;
+  thursdaySessions: ThursdaySession[];
+}) {
   const [step, setStep] = useState(1);
   const [campus, setCampus] = useState("");
   const [session, setSession] = useState("");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const campusOptions = [
+    ...campuses.map((campus) => ({
+      value: campus.slug,
+      title: campus.shortName,
+      detail: campus.name,
+      meta: campus.type,
+    })),
+    {
+      value: "not-sure",
+      title: "Not sure yet",
+      detail: "Help me choose",
+      meta: "We will help you find the right group",
+    },
+  ];
+
+  const sessionOptions = [
+    ...thursdaySessions.map((session) => ({
+      value: session.session,
+      title: session.session,
+      detail: session.time,
+      meta: "Thursday · Kicukiro – Mu Banyamakuru",
+    })),
+    {
+      value: "not-sure",
+      title: "Not sure yet",
+      detail: "Help me choose a time",
+      meta: "We will suggest the best session for your schedule",
+    },
+  ];
 
   const selectedCampus = campusOptions.find((option) => option.value === campus);
   const selectedSession = sessionOptions.find((option) => option.value === session);

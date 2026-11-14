@@ -9,7 +9,7 @@ import {
   SectionHeading,
 } from "@/components/ui";
 import { VisitPlanner } from "@/components/visit-planner";
-import { site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Plan your visit",
@@ -38,7 +38,9 @@ const expectations = [
   },
 ];
 
-export default function VisitPage() {
+export default async function VisitPage() {
+  const { campuses, site, thursdaySessions } = await getSiteContent();
+
   return (
     <>
       <PageHero
@@ -123,7 +125,11 @@ export default function VisitPage() {
               </div>
             </div>
 
-            <VisitPlanner />
+            <VisitPlanner
+              campuses={campuses}
+              site={site}
+              thursdaySessions={thursdaySessions}
+            />
           </div>
         </Container>
       </section>

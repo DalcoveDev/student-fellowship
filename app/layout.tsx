@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Merriweather } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { site } from "@/lib/site";
+import { getSiteContent, type Site } from "@/lib/content";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,103 +11,112 @@ const inter = Inter({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
   subsets: ["latin"],
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  applicationName: site.name,
-  title: {
-    default: "Christian Students Network | Making disciples in Rwanda",
-    template: "%s | Christian Students Network",
-  },
-  description: site.vision,
-  keywords: [
-    "Christian Students Network",
-    "student fellowship Rwanda",
-    "Bible study Kigali",
-    "university ministry",
-    "high school ministry",
-    "Christian students Rwanda",
-    "discipleship Rwanda",
-  ],
-  authors: [{ name: site.name, url: site.url }],
-  creator: site.name,
-  publisher: site.name,
-  category: "religion",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "/",
-    siteName: site.name,
-    title: "Christian Students Network | Making disciples in Rwanda",
-    description: site.vision,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Christian Students Network | Making disciples in Rwanda",
-    description: site.vision,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { site: contentSite } = await getSiteContent();
+
+  return {
+    metadataBase: new URL(contentSite.url),
+    applicationName: contentSite.name,
+    title: {
+      default: "Christian Students Network | Making disciples in Rwanda",
+      template: "%s | Christian Students Network",
+    },
+    description: contentSite.vision,
+    keywords: [
+      "Christian Students Network",
+      "student fellowship Rwanda",
+      "Bible study Kigali",
+      "university ministry",
+      "high school ministry",
+      "Christian students Rwanda",
+      "discipleship Rwanda",
+    ],
+    authors: [{ name: contentSite.name, url: contentSite.url }],
+    creator: contentSite.name,
+    publisher: contentSite.name,
+    category: "religion",
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: "/",
+      siteName: contentSite.name,
+      title: "Christian Students Network | Making disciples in Rwanda",
+      description: contentSite.vision,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Christian Students Network | Making disciples in Rwanda",
+      description: contentSite.vision,
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
-  },
-};
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#0e241d",
 };
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": `${site.url}/#organization`,
-      name: site.name,
-      url: site.url,
-      logo: `${site.url}/icon.png`,
-      description: site.vision,
-      email: site.email,
-      telephone: "+250784857707",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Kigali",
-        addressCountry: "RW",
+function buildStructuredData(site: Site) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${site.url}/#organization`,
+        name: site.name,
+        url: site.url,
+        logo: `${site.url}/icon.png`,
+        description: site.vision,
+        email: site.email,
+        telephone: site.phones[0]?.href.replace("tel:", "") ?? "",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: site.location,
+          addressCountry: "RW",
+        },
       },
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${site.url}/#website`,
-      url: site.url,
-      name: site.name,
-      description: site.vision,
-      inLanguage: "en",
-      publisher: { "@id": `${site.url}/#organization` },
-    },
-  ],
-};
+      {
+        "@type": "WebSite",
+        "@id": `${site.url}/#website`,
+        url: site.url,
+        name: site.name,
+        description: site.vision,
+        inLanguage: "en",
+        publisher: { "@id": `${site.url}/#organization` },
+      },
+    ],
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const content = await getSiteContent();
+  const structuredData = buildStructuredData(content.site);
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      className={`${inter.variable} ${merriweather.variable} h-full antialiased`}
     >
       <body
         suppressHydrationWarning
@@ -123,11 +132,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <Header />
+        <Header site={content.site} nav={content.nav} />
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <Footer />
+        <Footer site={content.site} />
       </body>
     </html>
   );

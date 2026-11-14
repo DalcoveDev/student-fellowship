@@ -10,15 +10,13 @@ import {
   SectionHeading,
   TextLink,
 } from "@/components/ui";
-import { site } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Online ministry",
   description:
     "The Upside Down Show, weekly online sessions, long-form teaching, and Kinyarwanda gospel resources from Christian Students Network.",
 };
-
-const youtubeUrl = site.socials.youtube;
 
 const formats = [
   {
@@ -59,7 +57,10 @@ const formats = [
   },
 ];
 
-export default function OnlineMinistryPage() {
+export default async function OnlineMinistryPage() {
+  const { site } = await getSiteContent();
+  const youtubeUrl = site.socials.youtube;
+
   return (
     <>
       <PageHero

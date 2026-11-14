@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Clock, Mail, MapPin, Phone, WhatsApp, YouTube } from "@/components/icons";
 import { ContactForm } from "@/components/contact-form";
 import { Container, CtaBand, Eyebrow, PageHero } from "@/components/ui";
-import { site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -10,51 +10,53 @@ export const metadata: Metadata = {
     "Contact Christian Students Network in Kigali, Rwanda. Call, email, or send a message about Bible studies, campuses, events, or online ministry.",
 };
 
-const channels = [
-  {
-    title: "Call us",
-    icon: Phone,
-    lines: site.phones.map((phone) => ({
-      label: phone.label,
-      href: phone.href,
-    })),
-  },
-  {
-    title: "Email us",
-    icon: Mail,
-    lines: [{ label: site.email, href: `mailto:${site.email}` }],
-  },
-  {
-    title: "WhatsApp",
-    icon: WhatsApp,
-    lines: [
-      {
-        label: "Chat with the fellowship",
-        href: site.socials.whatsapp,
-      },
-    ],
-  },
-  {
-    title: "Visit us",
-    icon: MapPin,
-    lines: [
-      { label: "Kicukiro – Mu Banyamakuru", href: undefined },
-      { label: "Kigali, Rwanda", href: undefined },
-    ],
-  },
-  {
-    title: "Watch online",
-    icon: YouTube,
-    lines: [
-      {
-        label: "The Upside Down Show",
-        href: site.socials.youtube,
-      },
-    ],
-  },
-];
+export default async function ContactPage() {
+  const { site, thursdaySessions } = await getSiteContent();
 
-export default function ContactPage() {
+  const channels = [
+    {
+      title: "Call us",
+      icon: Phone,
+      lines: site.phones.map((phone) => ({
+        label: phone.label,
+        href: phone.href,
+      })),
+    },
+    {
+      title: "Email us",
+      icon: Mail,
+      lines: [{ label: site.email, href: `mailto:${site.email}` }],
+    },
+    {
+      title: "WhatsApp",
+      icon: WhatsApp,
+      lines: [
+        {
+          label: "Chat with the fellowship",
+          href: site.socials.whatsapp,
+        },
+      ],
+    },
+    {
+      title: "Visit us",
+      icon: MapPin,
+      lines: [
+        { label: "Kicukiro – Mu Banyamakuru", href: undefined },
+        { label: "Kigali, Rwanda", href: undefined },
+      ],
+    },
+    {
+      title: "Watch online",
+      icon: YouTube,
+      lines: [
+        {
+          label: "The Upside Down Show",
+          href: site.socials.youtube,
+        },
+      ],
+    },
+  ];
+
   return (
     <>
       <PageHero
@@ -132,7 +134,7 @@ export default function ContactPage() {
             </div>
 
             <div className="rounded-[1.5rem] border border-line bg-cream p-6 sm:p-9 lg:self-start">
-              <ContactForm />
+              <ContactForm site={site} />
             </div>
           </div>
         </Container>

@@ -9,7 +9,7 @@ import {
   PageHero,
   SectionHeading,
 } from "@/components/ui";
-import { campuses, site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Campuses",
@@ -38,7 +38,9 @@ const expectations = [
   },
 ];
 
-export default function CampusesPage() {
+export default async function CampusesPage() {
+  const { campuses, site, thursdaySessions } = await getSiteContent();
+
   return (
     <>
       <PageHero

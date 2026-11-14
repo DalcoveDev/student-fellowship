@@ -10,7 +10,7 @@ import {
   SectionHeading,
   TextLink,
 } from "@/components/ui";
-import { events, site, thursdaySessions } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
     "Conferences, campus gatherings, and the weekly Thursday Bible study with Christian Students Network in Rwanda.",
 };
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const { events, site, thursdaySessions } = await getSiteContent();
+
   return (
     <>
       <PageHero

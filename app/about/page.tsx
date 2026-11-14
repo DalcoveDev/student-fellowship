@@ -11,7 +11,7 @@ import {
   SectionHeading,
   TextLink,
 } from "@/components/ui";
-import { ministryExpressions, site } from "@/lib/site";
+import { getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About us",
@@ -46,7 +46,9 @@ const values = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { ministryExpressions, site } = await getSiteContent();
+
   return (
     <>
       <PageHero

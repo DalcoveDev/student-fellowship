@@ -21,6 +21,11 @@ export function Header({ site, nav }: { site: Site; nav: NavItem[] }) {
   const isActive = (href: string) =>
     href === "/" ? pathname === href : pathname.startsWith(href);
 
+  // The admin portal renders its own header and sidebar.
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50">
       <div className="bg-forest-deep text-cream/75">

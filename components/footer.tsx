@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Mail, MapPin, Phone, WhatsApp, YouTube } from "@/components/icons";
 import { Container } from "@/components/ui";
 import type { Site } from "@/lib/content";
+import { ArrowUpRight, Lock } from "@/components/icons";
 
 const explore = [
   { label: "About us", href: "/about" },
@@ -24,6 +28,13 @@ const ministries = [
 ];
 
 export function Footer({ site }: { site: Site }) {
+  const pathname = usePathname();
+
+  // The admin portal has its own chrome.
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="bg-forest-deep text-cream">
       <Container className="py-14 sm:py-16">
@@ -136,6 +147,24 @@ export function Footer({ site }: { site: Site }) {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-cream/15 pt-6 text-xs text-cream/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Christian Students Network. All rights reserved.</p>
+          <div className="relative">
+            <div
+              className="pointer-events-auto absolute left-0 right-0 top-full h-12 z-20"
+            >
+              <div
+                className="absolute left-1/2 -top-6 -translate-x-1/2 rounded-full bg-forest-deep px-5 py-1 opacity-0 transition-opacity duration-200 hover:opacity-100 focus:opacity-100"
+              >
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-cream shadow-sm"
+                >
+                  <Lock className="h-3.5 w-3.5" />
+                  Admin
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+          </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link href="/visit" className="transition-colors hover:text-cream">
               Plan your visit

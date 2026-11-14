@@ -96,7 +96,7 @@ export type SiteContent = {
   nav: NavItem[];
   ministryExpressions: MinistryExpression[];
   campuses: Campus[];
-  events: SiteEvent[];
+  events: Event[];
   thursdaySessions: ThursdaySession[];
   gallery: GalleryImage[];
   testimonials: Testimonial[];
@@ -105,11 +105,71 @@ export type SiteContent = {
   statementOfFaith: FaithSection[];
 };
 
+export type Event = SiteEvent;
+
 export type { Article, FaithSection, NavItem };
 
 const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
 ).replace(/\/$/, "");
+
+/**
+ * When this project ships its own local content store, prefer it. Otherwise
+ * fall through to the external backend and then to the checked-in static
+ * content modules.
+ */
+async function loadBackend(): Promise<SiteContent | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/site-content/`, {
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = await response.json();
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const normalized = normalizeBackendPayload(payload as Record<string, unknown>);
+    if (normalized.site?.name) {
+      return normalized;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function loadLocalStore(): Promise<SiteContent | null> {
+  try {
+    const response = await fetch("/api/content", {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = await response.json();
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+
+    const normalized = normalizeBackendPayload(payload as Record<string, unknown>);
+    if (normalized.site?.name) {
+      return normalized;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export const fallbackContent: SiteContent = {
   site: fallbackSite,
@@ -166,7 +226,7 @@ function mergeSite(value: unknown): Site {
   };
 }
 
-function normalize(payload: unknown): SiteContent {
+function normalizeBackendPayload(payload: unknown): SiteContent {
   if (!isRecord(payload)) return fallbackContent;
 
   return {
@@ -202,33 +262,29 @@ function normalize(payload: unknown): SiteContent {
 /**
  * Load every content collection the website renders from the Django API.
  *
- * The result is cached for a few minutes and tagged so it can be revalidated
- * on demand. If the backend is unreachable (for example while running the
- * frontend on its own), the checked-in content modules are used instead so the
- * site keeps rendering.
+ * The backend is the default source. If it is unreachable, the frontend falls
+ * back to the project-local admin content store, and only then to the
+ * checked-in static content modules so the site keeps rendering.
  */
 export async function getSiteContent(): Promise<SiteContent> {
   "use cache";
   cacheLife("minutes");
   cacheTag("site-content");
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/site-content/`, {
-      headers: { Accept: "application/json" },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Site content request failed (${response.status})`);
-    }
-
-    return normalize(await response.json());
-  } catch (error) {
-    console.warn(
-      `[content] Using local content because ${API_BASE_URL}/api/v1/site-content/ is unavailable.`,
-      error,
-    );
-    return fallbackContent;
+  const backend = await loadBackend();
+  if (backend) {
+    return backend;
   }
+
+  const local = await loadLocalStore();
+  if (local) {
+    return local;
+  }
+
+  console.warn(
+    `[content] Using local content because ${API_BASE_URL}/api/v1/site-content/ is unavailable.`,
+  );
+  return fallbackContent;
 }
 
 export function readingTime(article: Article) {
@@ -244,3 +300,12 @@ export function readingTime(article: Article) {
 export function getArticle(articles: Article[], slug: string) {
   return articles.find((article) => article.slug === slug);
 }
+
+/**
+ * Normalize helpers kept internal so the public pages always get the same
+ * shape whether the data came from the backend, the local store, or the
+ * static fallback modules.
+ */
+type NormalizeBackendPayload = typeof normalizeBackendPayload;
+const _normalizeBackendPayload: NormalizeBackendPayload = normalizeBackendPayload;
+void _normalizeBackendPayload;

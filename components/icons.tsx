@@ -158,3 +158,71 @@ export function WhatsApp(props: IconProps) {
   );
 }
 
+export function Lock(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </svg>
+  );
+}
+
+export function Trash2(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h7Z" />
+    </svg>
+  );
+}
+
+export function PenLine(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="M17 3a2.85 2.85 0 1 1 4 4L7 20l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+export function Plus(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="M12 5v14m-7-7h14" />
+    </svg>
+  );
+}
+
+export function ArrowUp(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+export function ArrowUpDown(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="m21 16-6 6-6-6" />
+      <path d="m3 8 6-6 6 6" />
+    </svg>
+  );
+}
+
+export function ArrowDown(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="m6 15 6-6 6 6" />
+    </svg>
+  );
+}
+
+export function Save(props: IconProps) {
+  return (
+    <svg {...attrs} {...props}>
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+      <path d="M17 21v-8H7v8" />
+      <path d="M7 3v5h8" />
+    </svg>
+  );
+}
+
